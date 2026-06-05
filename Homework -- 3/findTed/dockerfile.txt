@@ -1,0 +1,11 @@
+FROM public.ecr.aws/lambda/python:3.12
+
+ENV HOME=/tmp
+ENV CHROMA_CACHE_DIR=/tmp/chroma
+
+COPY app/requirements.txt ${LAMBDA_TASK_ROOT}/requirements.txt
+RUN pip install --no-cache-dir -r ${LAMBDA_TASK_ROOT}/requirements.txt
+
+COPY app/handler.py ${LAMBDA_TASK_ROOT}/handler.py
+
+CMD ["handler.lambda_handler"]
