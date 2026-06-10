@@ -32,8 +32,6 @@ def format_talk(doc):
 
 def lambda_handler(event, context):
     try:
-        # API Gateway mette il body come stringa in event["body"]
-        # Se invece è invocata direttamente, i dati sono in event
         if "body" in event and event["body"]:
             body = json.loads(event["body"]) if isinstance(event["body"], str) else event["body"]
         else:
@@ -67,12 +65,9 @@ def lambda_handler(event, context):
                 "body": json.dumps({"video_id": video_id, "watch_next": []})
             }
 
-        # 2. Recupera i dettagli completi di ogni talk suggerito
-        #    Gli ID potrebbero essere stringhe semplici o ObjectId — gestiamo entrambi
         cursor = collection.find({"_id": {"$in": watch_next_ids}})
         docs_by_id = {str(doc["_id"]): doc for doc in cursor}
 
-        # 3. Mantieni l'ordine originale della lista watch_next
         result = []
         for wid in watch_next_ids:
             doc = docs_by_id.get(str(wid))
